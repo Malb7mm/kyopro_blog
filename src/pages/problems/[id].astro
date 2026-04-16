@@ -1,0 +1,49 @@
+---
+import { render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Prose from "../../components/Prose.astro";
+import { getCollection } from "astro:content";
+import DateYMS from "../../components/DateYMS.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("problems");
+  return posts.map(post => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const contests = await getCollection("contests");
+const contest = contests.find(c => 
+	c.data.problems.some(ref => ref.id === post.id)
+);
+---
+
+<Layout title={post.data.title}>
+	<Prose>
+		<div class="tw:flex tw:flex-row tw:gap-3">
+			<a href="/problems">問題一覧</a>
+			{contest &&
+				<a href={`/contests/${contest.id}`}>コンテスト<span class="tw:text-xs">（{contest.data.title}）</span></a>
+			}
+		</div>
+		<h1>{post.data.title}</h1>
+		<div class="tw:-mt-6 tw:mb-6">
+			<DateYMS date={post.data.publishAt}/> {post.data.updateAt && (
+				<span>(更新: <DateYMS date={post.data.updateAt}/>)</span>
+			)}
+		</div>
+		<div class="tw:mx-2">
+			<span>リンク</span>
+			{post.data.links &&
+				Object.entries(post.data.links).map(([name, link]) => (
+					<a href={link} target="_blank">{name}</a>
+				))
+			}
+		</div>
+		<Content />
+	</Prose>
+</Layout>

@@ -1,0 +1,7 @@
+palettes:
+  p:
+    interval: 10
+    anchors:
+      - [0, "#FFFFFF"]
+      - [600, "#827D7F"]
+      - [1000, "#111111"]

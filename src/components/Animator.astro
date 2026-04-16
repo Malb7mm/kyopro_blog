@@ -1,0 +1,45 @@
+<script>
+  const containers = document.querySelectorAll(".component--animator-container");
+
+  for (const container of containers) {
+    if (!(container instanceof HTMLElement)) continue;
+
+    const { interval, startDelay, loopDelay } = container.dataset;
+    const intervalMs = parseInt(interval ?? "1000");
+    const startDelayMs = parseInt(startDelay ?? "500");
+    const loopDelayMs = parseInt(loopDelay ?? "1000");
+
+    const children: HTMLElement[] = []
+    for (const child of Array.from(container.children)) {
+      if (child instanceof HTMLElement) {
+        child.style.display = "none";
+        children.push(child);
+      }
+      else {
+        console.warn("The one of Animator's element wasn't HTMLElement and ignored: ", child);
+      }
+    }
+
+    const length = children.length;
+    if (length === 0) continue;
+
+    let prevIndex = 0;
+    let index = 0;
+    const update = () => {
+      children[prevIndex].style.display = "none";
+      children[index].style.display = "block";
+
+      prevIndex = index;
+      index++;
+      if (index === length) index = 0;
+      if (prevIndex === 0) setTimeout(update, intervalMs + startDelayMs);
+      else if (index === 0) setTimeout(update, intervalMs + loopDelayMs);
+      else setTimeout(update, intervalMs);
+    };
+    update();
+  }
+</script>
+
+<div class="component--animator-container">
+  <slot />
+</div>

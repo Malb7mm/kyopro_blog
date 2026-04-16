@@ -1,0 +1,23 @@
+---
+title: 
+publishAt: Ctrl+Shift+I
+links: {"問題": ""}
+---
+import Animator from "../../components/Animator.astro";
+import Faint from "../../components/markup/Faint.astro";
+import Red from "../../components/markup/Red.astro";
+
+## 問い
+
+p
+
+## 解く
+
+- li
+
+## 書く
+
+### h3
+
+```cpp
+```

@@ -1,0 +1,4 @@
+@import "tailwindcss" prefix(tw);
+@import "./palettes.css";
+@plugin "@tailwindcss/typography";
+@config "./tailwind.config.js";

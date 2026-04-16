@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from "astro:content";
+import Prose from "../../components/Prose.astro";
+import DateDiff from '../../components/DateDiff.astro';
+
+const posts = await getCollection("problems");
+posts.sort((a, b) => {
+  const dateA = a.data.publishAt;
+  const dateB = b.data.publishAt;
+  return dateB.getTime() - dateA.getTime();
+});
+---
+
+<Layout title="Problems">
+  <Prose>
+    <h1 class="tw:text-lg">Problems - 問題</h1>
+    <ul>
+      {posts.map(post => (
+        <li>
+          <div class="tw:flex tw:flex-row tw:gap-3">
+            <a href={`/problems/${post.id}`}>
+              {post.data.title}
+            </a>
+            <DateDiff date={post.data.publishAt}/>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Prose>
+</Layout>

@@ -1,0 +1,43 @@
+---
+title: ABC445 B - Center Alignment
+publishAt: 2026-04-16 13:06:10
+links: {"問題": "https://atcoder.jp/contests/abc445/tasks/abc445_b"}
+---
+
+## 問い
+
+$N$ 個の**奇数長の**文字列が与えられる。最長の文字列が $M$ 文字のとき、\
+全ての文字列に**前後同数の** `.` を挿入して $M$ 文字に変換せよ。
+
+## 解く
+
+- サンプルを見る
+- 全てを理解する（超能力）
+- 必要な`.`の数を求めたい
+- 足りない文字数は `m - s.length()`
+- 片方あたりだと `m - s.length() / 2`
+
+## 書く
+
+### 最長文字数を求める
+
+はい
+
+```cpp
+    ll m=0;
+    for(auto&s:S)chmax(m,s.length());
+```
+
+### 出力する
+
+stringを構築するよりかんたん
+
+```cpp
+    for(auto&s:S){
+        ll ins=(m-s.length())/2;
+        rep(i,ins)cout<<".";
+        cout<<s;
+        rep(i,ins)cout<<".";
+        cout<<el;
+    }
+```

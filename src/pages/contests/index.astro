@@ -1,0 +1,29 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from "astro:content";
+import Prose from "../../components/Prose.astro";
+
+const posts = await getCollection("contests");
+posts.sort((a, b) => {
+  const dateA = a.data.date;
+  const dateB = b.data.date;
+  return dateB.getTime() - dateA.getTime();
+});
+---
+
+<Layout title="Contests">
+  <Prose>
+    <h1 class="tw:text-lg">Contests - コンテスト</h1>
+    <ul>
+      {posts.map(post => (
+        <li>
+          <div class="tw:flex tw:flex-row tw:gap-3">
+            <a href={`/contests/${post.id}`}>
+              {post.data.title}
+            </a>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Prose>
+</Layout>

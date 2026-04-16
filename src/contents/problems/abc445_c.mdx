@@ -1,0 +1,60 @@
+---
+title: ABC445 C - Sugoroku Destination
+publishAt: 2026-04-16 13:06:19
+links: {"問題": "https://atcoder.jp/contests/abc445/tasks/abc445_c"}
+---
+import Faint from "../../components/markup/Faint.astro"
+import Red from "../../components/markup/Red.astro"
+
+## 問い
+
+$N$ 個のマスに整数 $A_i (i\geq A_i\geq N)$ が書かれている。\
+各マスに駒を置いて「$A_i$ 番目のマスに移動」を $10^{100}$回行ったとき、\
+最終的にどのマスに駒があるかそれぞれ答えよ。
+
+## 解く
+
+- 頑張って問題文を読むと Functional Graph と書いてある
+- <Faint><Red>$i$</Red> $\geq A_i\geq N$ に気づく</Faint>
+- 愚直シミュレーションは $O(N^2)$ なのでダメ
+- 思考停止でダブリングを召喚する
+
+## 書く
+
+### ダブリング
+
+はい
+
+```cpp
+    vll A(n);cin>>A;
+    rep(i,n)A[i]--;
+    Dbl1::It dbl(A);
+    rep(i,n){
+        cout<<dbl.query(i,INF).dest+1<<sp;
+    }
+```
+
+## 解く 2
+
+- 定数時間で解こう
+- 止まれるのは自己ループになってる頂点だけ
+- どの頂点から始めてもいずれかの自己ループ頂点にたどり着く
+- 辺の向きを逆にすると、自己ループ頂点側から、そこへたどり着く全ての頂点に伝播できる
+- グ、グラフを構築する？
+- 実装面倒すぎ～～
+
+## 解く 3
+
+- [公式解説](https://atcoder.jp/contests/abc445/editorial/15908)
+- 逆から決めていけば定数時間だし簡単！賢い
+
+## 書く 3
+
+すげ～
+
+```cpp
+    vll ans(n);
+    iota(all(ans),0);
+    reprev(i,n)ans[i]=ans[A[i]];
+    for(auto&a:ans)cout<<a+1<<sp;
+```

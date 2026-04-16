@@ -1,0 +1,13 @@
+---
+import { formatDistance } from "date-fns";
+import { ja } from "date-fns/locale";
+
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+const text = formatDistance(date, new Date(), { locale: ja, addSuffix: true });
+---
+
+{text}

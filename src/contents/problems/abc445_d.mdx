@@ -1,0 +1,211 @@
+---
+title: ABC445 D - Reconstruct Chocolate 
+publishAt: 2026-04-16 13:59:08
+links: {"問題": "https://atcoder.jp/contests/abc445/tasks/abc445_d"}
+---
+import Animator from "../../components/Animator.astro";
+import Faint from "../../components/markup/Faint.astro";
+import Red from "../../components/markup/Red.astro";
+
+export const choco = (id, x, y, wCnt, hCnt, color = "#d1bab2") => {
+    const xArr = new Array(wCnt).fill(0).map((v, i) => x + i * 20);
+    const yArr = new Array(hCnt).fill(0).map((v, i) => y + i * 20);
+    return xArr.map(x => yArr.map(y => (
+        <rect key={`choco_${id}_${x}_${y}`} x={x} y={y} width="19" height="19" fill={color} />
+    )))
+};
+
+export const chocos = [
+    choco("0", 0, 0, 6, 4, "#a16a58"),
+    choco("1", 270, 0, 2, 2),
+    choco("2", 180, 0, 4, 1),
+    choco("3", 180, 30, 1, 3),
+    choco("4", 270, 50, 2, 1),
+    choco("5", 210, 30, 1, 3),
+    choco("6", 130, 0, 2, 4),
+];
+
+export const chocosA = [
+    choco("6a", 130, 0, 2, 4, "#f05146"),
+    choco("2a", 180, 0, 4, 1, "#f05146"),
+    choco("3a", 180, 30, 1, 3, "#f05146"),
+    choco("5a", 210, 30, 1, 3, "#f05146"),
+    choco("1a", 270, 0, 2, 2, "#f05146"),
+    choco("4a", 270, 50, 2, 1, "#f05146"),
+];
+
+export const chocosB = [
+    choco("6b", 0, 0, 2, 4, "#f05146"),
+    choco("2b", 40, 0, 4, 1, "#f05146"),
+    choco("3b", 40, 20, 1, 3, "#f05146"),
+    choco("5b", 60, 20, 1, 3, "#f05146"),
+    choco("1b", 80, 20, 2, 2, "#f05146"),
+    choco("4b", 80, 60, 2, 1, "#f05146"),
+];
+
+
+## 問い
+
+$W×H$ ブロックの板チョコを手に持っている。\
+これをブロックの境界に沿って $2$ 分割し、片方を机に置く。\
+この操作を $N-1$ 回繰り返したあと、最後に手に持っているピースも机に置いた。\
+できた $N$ 枚のピースが元の向きで与えられるので、\
+$W×H$ ブロックの板チョコになるよう配置を復元せよ。
+
+## 解く
+
+- [1分悩んでダメだったので解説を見に行った](https://atcoder.jp/contests/abc445/editorial/15896)
+- ある分割時点で手に持っているピースの大きさを $w×h$ とすると、\
+  少なくとも分割後机に置いたほうのピースは、幅と高さのどちらかが $w$ か $h$ のまま
+- つまり、初期時点で $w=W,h=H$ として、幅か高さが $w$ か $h$ に一致する\
+  ピースを追いかけて $w,h$ を小さくしていけば、自動的に全ての位置が決まる
+
+<Animator>
+    <div style="display:block">
+        <svg width="500" height="100" viewBox="0 0 500 100">
+            {chocos}
+            <text x="320" y="45" text-anchor="start">w=6, h=4</text>
+        </svg>
+    </div>
+    <div style="display:none">
+        <svg width="500" height="100" viewBox="0 0 500 100">
+            {chocos}
+            {chocosA.slice(0,1)}
+            {chocosB.slice(0,1)}
+            <text x="320" y="45" text-anchor="start">w=4, h=4</text>
+        </svg>
+    </div>
+    <div style="display:none">
+        <svg width="500" height="100" viewBox="0 0 500 100">
+            {chocos}
+            {chocosA.slice(0,2)}
+            {chocosB.slice(0,2)}
+            <text x="320" y="45" text-anchor="start">w=4, h=3</text>
+        </svg>
+    </div>
+    <div style="display:none">
+        <svg width="500" height="100" viewBox="0 0 500 100">
+            {chocos}
+            {chocosA.slice(0,3)}
+            {chocosB.slice(0,3)}
+            <text x="320" y="45" text-anchor="start">w=3, h=3</text>
+        </svg>
+    </div>
+    <div style="display:none">
+        <svg width="500" height="100" viewBox="0 0 500 100">
+            {chocos}
+            {chocosA.slice(0,4)}
+            {chocosB.slice(0,4)}
+            <text x="320" y="45" text-anchor="start">w=2, h=3</text>
+        </svg>
+    </div>
+    <div style="display:none">
+        <svg width="500" height="100" viewBox="0 0 500 100">
+            {chocos}
+            {chocosA.slice(0,5)}
+            {chocosB.slice(0,5)}
+            <text x="320" y="45" text-anchor="start">w=2, h=1</text>
+        </svg>
+    </div>
+    <div style="display:none">
+        <svg width="500" height="100" viewBox="0 0 500 100">
+            {chocos}
+            {chocosA.slice(0,6)}
+            {chocosB.slice(0,6)}
+            <text x="320" y="45" text-anchor="start">w=0, h=0</text>
+        </svg>
+    </div>
+</Animator>
+
+- これ作るの普通に大変だった 二度とやらん
+- つまり、
+  - ピースを幅順、高さ順でそれぞれソートしておく
+  - まだ配置していないピースのうち、\
+    最も幅の大きいピース、最も高さの大きいピースのどちらかは\
+    常に配置可能である
+
+## 書く
+
+イテレータゴリ押し実装はやめたほうがいい
+
+```cpp
+void solve() {
+    ll cin(H,W,n);
+    vtll3 HWI;
+    rep(i,n){ll cin(h,w);HWI.emplace_back(h,w,i);}
+    set<ll> used;
+    auto HWI2=HWI;
+    sort(all(HWI),comp<-1>); //H降順ソート
+    sort(all(HWI2),comp<-2>); //W降順ソート
+    auto itr=HWI.begin();
+    auto itr2=HWI2.begin();
+    vpll ans(n);
+    ll r=0,c=0;
+    rep(j,n){
+        ll h=-1,w=-1;
+        if(itr!=HWI.end())h=get<0>(*itr);
+        if(itr2!=HWI2.end())w=get<1>(*itr2);
+        if(h==H-r){
+            auto i=get<2>(*itr);
+            ans[i]={r,c};
+            used.insert(i);
+            c+=get<1>(*itr);
+            itr++;
+        }
+        else if(w==W-c){
+            auto i=get<2>(*itr2);
+            ans[i]={r,c};
+            used.insert(i);
+            r+=get<0>(*itr2);
+            itr2++;
+        }
+        while(itr!=HWI.end()&&used.contains(get<2>(*itr)))itr++;
+        while(itr2!=HWI2.end()&&used.contains(get<2>(*itr2)))itr2++;
+    }
+    for(auto&[r,c]:ans)cout<<r+1<<sp<<c+1<<el;
+}
+```
+
+## 書く Advanced
+
+Gemini添削 優先度付きキューを使えと言われた それはそう
+
+- 反省会
+  - `itr` `itr2`←やめよう
+  - `get`は普通にわけがわからなくなる
+    - なぜ添削後の`first`/`second`はマシに感じるのか
+    - まあ大体一箇所に固まってるから？
+  - バケットで十分なところに`set`を使うとAIさんにはだいたい怒られる
+
+```cpp
+void solve() {
+    ll cin(h,w,n);
+    vll H(n),W(n);
+    pqueue<pll,Comp<1>> pq_h,pq_w;
+    rep(i,n){
+        cin>>H[i]>>W[i];
+        pq_h.emplace(H[i],i);
+        pq_w.emplace(W[i],i);
+    }
+    vpll ans(n);
+    vbool used(n);
+    ll r=0,c=0;
+    rep(j,n){
+        while(pq_h.size()>0&&used[pq_h.top().second])pq_h.pop();
+        while(pq_w.size()>0&&used[pq_w.top().second])pq_w.pop();
+        if(pq_h.size()>0&&pq_h.top().first==h-r){
+            auto i=pq_h.top().second;
+            ans[i]={r,c};
+            used[i]=true;
+            c+=W[i];
+        }
+        else{
+            auto i=pq_w.top().second;
+            ans[i]={r,c};
+            used[i]=true;
+            r+=H[i];
+        }
+    }
+    for(auto&[r,c]:ans)cout<<r+1<<sp<<c+1<<el;
+}
+```

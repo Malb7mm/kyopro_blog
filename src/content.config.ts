@@ -5,12 +5,8 @@ import { isValid, parse } from "date-fns";
 import { ja } from "date-fns/locale";
 
 const dateSchema = z.preprocess((val: any) => {
-  if (!(val instanceof Date)) return z.NEVER;
-  const isoString = val.toISOString();
-  const referenceDate = new Date();
-  const result = parse(isoString, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", referenceDate, { locale: ja });
-  if (!isValid(result)) return z.NEVER;
-  return result;
+  if (!(val instanceof Date)) return val;
+  return new Date(val.toISOString().replace("Z", "+09:00"));
 }, z.date());
 
 const problems = defineCollection({

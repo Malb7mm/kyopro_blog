@@ -3,7 +3,7 @@ import { render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Prose from "../../components/Prose.astro";
 import { getCollection } from "astro:content";
-import DateYMS from "../../components/DateYMS.astro";
+import DateYMD from "../../components/DateYMD.astro";
 import { getEntries } from "astro:content";
 
 export async function getStaticPaths() {
@@ -25,7 +25,7 @@ const problems = await getEntries(post.data.problems);
 		<a href="/contests">戻る</a>
 		<h1>{post.data.title}</h1>
 		<div class="tw:-mt-6 tw:mb-6">
-			<DateYMS date={post.data.date}/>
+			<DateYMD date={post.data.date}/>
 		</div>
 		<div class="tw:-mt-6 tw:mb-8">
 			<h2>問題</h2>

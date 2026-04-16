@@ -3,7 +3,7 @@ import { render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Prose from "../../components/Prose.astro";
 import { getCollection } from "astro:content";
-import DateYMS from "../../components/DateYMS.astro";
+import DateYMD from "../../components/DateYMD.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("problems");
@@ -32,8 +32,8 @@ const contest = contests.find(c =>
 		</div>
 		<h1>{post.data.title}</h1>
 		<div class="tw:-mt-6 tw:mb-6">
-			<DateYMS date={post.data.publishAt}/> {post.data.updateAt && (
-				<span>(更新: <DateYMS date={post.data.updateAt}/>)</span>
+			<DateYMD date={post.data.publishAt}/> {post.data.updateAt && (
+				<span>(更新: <DateYMD date={post.data.updateAt}/>)</span>
 			)}
 		</div>
 		<div class="tw:mx-2">

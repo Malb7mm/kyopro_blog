@@ -1,0 +1,38 @@
+---
+import Menu from "../assets/lucide/menu.svg";
+---
+
+<div class="tw:bg-p-30 tw:w-screen tw:h-screen tw:relative">
+	<button id="layout-mobile--header-button" class="tw:bg-p-80 tw:hover:bg-p-120 tw:border-2 tw:border-p-150 tw:w-8 tw:h-8 tw:absolute tw:left-2 tw:top-2 tw:z-20 tw:grid tw:place-content-center">
+    <Menu class="tw:stroke-p-400"></Menu>
+  </button>
+	<header id="layout-mobile--header" class="tw:bg-p-30 tw:w-60 tw:h-full tw:absolute tw:left-0 tw:top-0 tw:z-10 tw:border-r tw:border-r-p-200">
+    <div class="tw:mt-9">
+      <slot name="header"/>
+    </div>
+  </header>
+	<main class="tw:overflow-y-scroll tw:w-full tw:h-full tw:absolute tw:left-0 tw:top-0">
+    <div class="tw:pl-5">
+      <slot name="main"/>
+    </div>
+  </main>
+</div>
+
+<script>
+  const buttonEl = document.getElementById("layout-mobile--header-button");
+  const headerEl = document.getElementById("layout-mobile--header");
+
+  buttonEl?.addEventListener("click", () => {
+    headerEl?.classList.toggle("open");
+  });
+</script>
+
+<style>
+  #layout-mobile--header {
+    display: none;
+  }
+
+  #layout-mobile--header.open {
+    display: block;
+  }
+</style>

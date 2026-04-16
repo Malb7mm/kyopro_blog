@@ -34,5 +34,6 @@ export default defineConfig({
     }), tailwindcss()],
   },
 
-  integrations: [mdx()]
+  integrations: [mdx()],
+  site: "https://malb7mm.github.io",
 });

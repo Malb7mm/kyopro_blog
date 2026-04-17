@@ -1,0 +1,5 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - run: node scripts/timestamp-updater.js {staged_files}
+      stage_fixed: true

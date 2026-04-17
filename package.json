@@ -19,6 +19,7 @@
     "date-fns": "^4.1.0",
     "rehype-katex": "^7.0.1",
     "remark-directive": "^4.0.0",
+    "remark-frontmatter": "^5.0.0",
     "remark-math": "^6.0.0",
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.2"
@@ -26,6 +27,9 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",
     "culori": "^4.0.2",
-    "js-yaml": "^4.1.1"
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.1",
+    "lefthook": "^2.1.5",
+    "yaml": "^2.8.3"
   }
 }

@@ -1,0 +1,189 @@
+---
+title: ABC445 G - Knight Placement
+publishAt: 2026-04-17T19:35:10+09:00
+links: { "問題": "https://atcoder.jp/contests/abc445/tasks/abc445_g" }
+---
+
+## 問い
+
+壁と空きマスで構成された $N \times N$ のグリッドが与えられる。\
+このグリッドの空きマス上にコマをなるべく多く置きたい。\
+あるコマを置いたマスから一方向を向いて $A$ マス進み、更にその左右の向きに\
+$B$ マス進んで到達できるマスには別のコマを置けないとしたとき、\
+コマを最も多く置ける配置のうち一つを示せ。
+
+## 解く
+
+- マスのグルーピングかと思ったけど無理そう
+- Geminiヒント：「ナイトの移動先を頂点、各マスをノードとした「二部グラフ」の性質に注目してください」
+  - なるほど？
+- $5 \times 5$ で二色に色分けしてみる？
+
+```
+oxoxo
+xoxox
+oxoxo
+xoxox
+oxoxo
+```
+
+- $5 \times 5, A=1,B=2$ だとチェック柄になるっぽい
+- $A=1,B=1$
+
+```
+o2o2o
+1x1x1
+o2o2o
+1x1x1
+o2o2o
+```
+
+- $A=0,B=1$ は $A=1,B=2$ と同じくチェック柄かな
+- $A=1,B=3$ もチェック柄っぽい
+- すなわち二部グラフにして各成分で多く塗れるほうの数を足していくだけでいい？
+
+## 書く？
+
+- 答えが合わない
+  - よく考えたら置かないマス同士は接続されててもいいんだから\
+  二部グラフの塗り分け通り置いても最適解にはならない？？
+
+```cpp
+void solve() {
+    ll cin(n,a,b);
+    vstr S(n);cin>>S;
+    auto encode=[&](ll r,ll c){return r*n+c;};
+    auto decode=[&](ll rc){return make_pair(rc/n,rc%n);};
+    vbool wall(n*n);
+    vvll G(n*n);
+    rep(r,n)rep(c,n){
+        if(S[r][c]=='#'){
+            wall[encode(r,c)]=true;
+            continue;
+        }
+        vpll to={{r+a,c+b},{r+a,c-b},{r-a,c+b},{r-a,c-b},{r+b,c+a},{r+b,c-a},{r-b,c+a},{r-b,c-a}};
+        for(auto&[r2,c2]:to){
+            if(!within(0,r2,n-1))continue;
+            if(!within(0,c2,n-1))continue;
+            if(S[r2][c2]=='#')continue;
+            ll rc=encode(r,c),rc2=encode(r2,c2);
+            G[rc].push_back(rc2);
+            G[rc2].push_back(rc);
+        }
+    }
+    auto ans=S;
+    vbool visited(n*n);
+    rep(i,n*n){
+        if(visited[i])continue;
+        if(wall[i])continue;
+        vvll coords(2);
+        function<void(ll,ll)> dfs=[&](ll u,ll color){
+            visited[u]=true;
+            coords[color].push_back(u);
+            for(auto&v:G[u]){
+                if(visited[v])continue;
+                dfs(v,(color+1)%2);
+            }
+        };
+        dfs(i,0);
+        if(coords[0].size()<coords[1].size())swap(coords[0],coords[1]);
+        debugs(decode(i),coords[0].size(),coords[1].size());
+        for(auto&j:coords[0]){
+            auto[r,c]=decode(j);
+            ans[r][c]='o';
+        }
+    }
+    for(auto&s:ans)cout<<s<<el;
+}
+```
+
+## 座学
+
+- 二部グラフで塗り分けるという意味ではなかったらしい
+
+<Block>
+    ### 最大独立集合問題
+
+    最大独立集合問題（さいだいどくりつしゅうごうもんだい）は、グラフ理論において、与えられたグラフ G(V,E) に対して、頂点集合 V'⊆V のうち V' 内の頂点間に枝が存在しないようなもの（独立集合）で大きさが最大のものを求める問題。最大安定集合問題とも言う。この問題は、NP困難であることが知られている。
+
+    <span class="tw:text-sm">出典: フリー百科事典『ウィキペディア（Wikipedia）』</span>
+</Block>
+
+- どの頂点対も辺で繋がっていないような頂点集合のうち\
+最大のものを求める問題　らしい
+- [ｅｄｉｔｏｒｉａｌ](https://atcoder.jp/contests/abc445/editorial/15902)
+  - [にあったPDF 前半読んだ](https://hos.ac/slides/20150319_flow.pdf)
+- とりあえず最大独立集合は最小被覆の補集合で、最小カットから求められるらしい
+
+## 書く Revival
+
+- 解けた すげぇ～
+- とりあえず最大マッチング最小被覆最大独立集合は覚えた
+
+```cpp
+void solve() {
+    ll cin(n,a,b);
+    vstr S(n);cin>>S;
+    auto encode=[&](ll r,ll c){return r*n+c;};
+    auto decode=[&](ll rc){return make_pair(rc/n,rc%n);};
+    vbool wall(n*n);
+    vvll G(n*n);
+    rep(r,n)rep(c,n){
+        if(S[r][c]=='#'){
+            wall[encode(r,c)]=true;
+            continue;
+        }
+        vpll to={{r+a,c+b},{r+a,c-b},{r-a,c+b},{r-a,c-b},{r+b,c+a},{r+b,c-a},{r-b,c+a},{r-b,c-a}};
+        for(auto&[r2,c2]:to){
+            if(!within(0,r2,n-1))continue;
+            if(!within(0,c2,n-1))continue;
+            if(S[r2][c2]=='#')continue;
+            ll rc=encode(r,c),rc2=encode(r2,c2);
+            G[rc].push_back(rc2);
+            G[rc2].push_back(rc);
+        }
+    }
+    auto ans=S;
+    vbool visited(n*n);
+    vbool isV0(n*n);
+    rep(i,n*n){
+        if(visited[i])continue;
+        if(wall[i])continue;
+        vvll V(2);
+        map<ll,ll> zip,ext;
+        ll serial=2;
+        function<void(ll,ll)> dfs=[&](ll u,ll color){
+            visited[u]=true;
+            V[color].push_back(u);
+            if(color==0)isV0[u]=true;
+            zip[u]=serial;
+            ext[serial++]=u;
+            for(auto&v:G[u]){
+                if(visited[v])continue;
+                dfs(v,(color+1)%2);
+            }
+        };
+        dfs(i,0);
+        mf_graph<ll> mfg(2+V[0].size()+V[1].size());
+        for(auto&u:V[0]){
+            mfg.add_edge(0,zip[u],1);
+            for(auto&v:G[u]){
+                mfg.add_edge(zip[u],zip[v],1);
+            }
+        }
+        for(auto&v:V[1]){
+            mfg.add_edge(zip[v],1,1);
+        }
+        mfg.flow(0,1);
+        auto S=mfg.min_cut(0);
+        rep(j,2,S.size()){
+            auto u=ext[j];
+            if(S[j]==isV0[u]){ //sから到達可能でs側||sから到達不可でt側
+                auto[r,c]=decode(u);
+                ans[r][c]='o';
+            }
+        }
+    }
+    for(auto&s:ans)cout<<s<<el;
+}
+```

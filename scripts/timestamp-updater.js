@@ -21,21 +21,26 @@ for (const file of files) {
   const doc = parseDocument(matter);
   if (!(doc.contents instanceof YAMLMap)) continue;
 
-  const findIndex = (target) => {
-    return doc.contents.items.findIndex(({ key }) => isScalar(key) && key.value === target);
-  };
-
-  if (doc.has("updateAt")) {
-    doc.set("updateAt", now);
-  } 
-  else if (doc.has("publishAt")) {
-    const target = findIndex("publishAt") + 1;
-    doc.contents.items.splice(target, 0, doc.createPair("updateAt", now));
-  } 
+  if (doc.has("noupdate") && doc.get("noupdate")) {
+    doc.delete("noupdate");
+  }
   else {
-    const target = findIndex("title") + 1;
-    if (target == 0) target = doc.items.length;
-    doc.contents.items.splice(target, 0, doc.createPair("publishAt", now));
+    const findIndex = (target) => {
+      return doc.contents.items.findIndex(({ key }) => isScalar(key) && key.value === target);
+    };
+
+    if (doc.has("updateAt")) {
+      doc.set("updateAt", now);
+    } 
+    else if (doc.has("publishAt")) {
+      const target = findIndex("publishAt") + 1;
+      doc.contents.items.splice(target, 0, doc.createPair("updateAt", now));
+    } 
+    else {
+      const target = findIndex("title") + 1;
+      if (target == 0) target = doc.items.length;
+      doc.contents.items.splice(target, 0, doc.createPair("publishAt", now));
+    }
   }
 
   const newMatter = doc.toString();

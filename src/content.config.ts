@@ -1,13 +1,8 @@
 import { defineCollection, reference } from "astro:content";
 import { glob } from 'astro/loaders';
 import { z } from "astro/zod";
-import { isValid, parse } from "date-fns";
-import { ja } from "date-fns/locale";
 
-const dateSchema = z.preprocess((val: any) => {
-  if (!(val instanceof Date)) return val;
-  return new Date(val.toISOString().replace("Z", "+09:00"));
-}, z.date());
+const dateSchema = z.coerce.date();
 
 const problems = defineCollection({
   loader: glob({
@@ -17,7 +12,7 @@ const problems = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
-    publishAt: dateSchema,
+    publishAt: dateSchema.default(new Date()),
     updateAt: dateSchema.optional(),
     links: z.record(z.string(), z.string()).optional(),
   }),
@@ -32,7 +27,7 @@ const contests = defineCollection({
   schema: z.object({
     title: z.string(),
     contestDate: dateSchema,
-    publishAt: dateSchema,
+    publishAt: dateSchema.default(new Date()),
     updateAt: dateSchema.optional(),
     problems: z.array(reference("problems")),
     links: z.record(z.string(), z.string()).optional(),
@@ -47,7 +42,7 @@ const articles = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
-    publishAt: dateSchema,
+    publishAt: dateSchema.default(new Date()),
     updateAt: dateSchema.optional(),
     links: z.record(z.string(), z.string()).optional(),
   }),

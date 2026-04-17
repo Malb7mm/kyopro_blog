@@ -1,10 +1,11 @@
 import fs from "node:fs/promises";
 import { isScalar, parseDocument, YAMLMap } from "yaml";
+import { formatISO } from 'date-fns';
 
 const filenameRegex = /\.(md|mdx)$/;
 const contentRegex = /^\uFEFF?\s*(?:---\r?\n([\s\S]*?)\r?\n---\r?\n)?([\s\S]*)$/;
 const files = process.argv.slice(2);
-const now = new Date();
+const now = formatISO(new Date());
 
 for (const file of files) {
   if (!file.match(filenameRegex)) continue;

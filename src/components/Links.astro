@@ -1,0 +1,19 @@
+---
+import Faint from './markup/Faint.astro';
+
+interface Props {
+  links?: Record<string, string>;
+}
+
+const { links } = Astro.props;
+---
+
+<div class="tw:flex tw:flex-row tw:gap-2">
+	<span>リンク</span>
+	{links && Object.keys(links).length > 0
+	  ?	Object.entries(links).map(([name, link]) => (
+			<a href={link} target="_blank">{name}</a>
+		))
+    : <Faint>なし</Faint>
+	}
+</div>

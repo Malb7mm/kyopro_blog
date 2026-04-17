@@ -1,0 +1,83 @@
+---
+title: ABC445 E - Many LCMs
+publishAt: 2026-04-17 09:13:43
+links: {"問題": "https://atcoder.jp/contests/abc445/tasks/abc445_e"}
+---
+
+## 問い
+
+長さ $N (\leq 2×10^5)$ の正整数列 $A (A_i < 10^7)$ が与えられる。\
+各要素について、それを除いた $N-1$ 要素の最小公倍数をそれぞれ求めよ。\
+*（マルチテストケース）*
+
+## 解く
+
+- 最小公倍数→ほな素因数分解か
+- 1つ目のテストケースをとりあえず素因数分解してみる
+
+<Block>
+    $\enspace 9 = 2^0 \times 3^2$\
+    $12 = 2^2 \times 3^1$\
+    $25 = 2^0 \times 3^0 \times 5^2$\
+    $\enspace 8 = 2^3$\
+    $15 = 2^0 \times 3^1 \times 5^1$
+</Block>
+
+- 最小公倍数＝各素因数で指数の $\max$ をとる
+- 全体の最小公倍数を求めておいて、ある要素を取り除いたとき
+  - その素因数の指数が単独トップ\
+  →要素を取り除いたときに最小公倍数が小さくなる
+  - トップタイ、もしくは自分より指数の大きい別の要素がある\
+  →（その素因数については）変化なし
+- わかりにくいので言い換える
+  - 各素因数について指数トップ2を求める（トップ2が同じ場合もある）
+  - 全体の最小公倍数は、全ての素因数について指数トップ1で掛け合わせたもの
+  - ある要素を取り除いたとき、指数がトップ1と同じである素因数があるなら、\
+  その素因数の指数は2位の値に置き換える
+- 計算量
+  - 素因数分解
+    - $M=\max_i{A_i}$ とおく
+    - 試し割り法で全体 $O(N \sqrt{M})$ ちょっと厳しい？
+    - 前処理ありのやつ 前計算 $O(M\log\log{M})$ \
+    クエリ全体 $O(N \log{M})$
+  - $10^7$ までの素数の数は約70万くらいらしい
+  - $2 \times 3 \times 5 \times 7 \times 11 \times 13 \times 17 \times 19 = 9699690$ なので、\
+  全ての素因数を走査してもせいぜい $8N$ 回くらい（トップ2の計算）
+  - オーダー的には問題なさそう？
+
+## 書く
+
+- ちゃんと考察詰め切ってから実装したおかげで\
+  ランタイムエラー直した後一発で通って気持ちよかった
+- [PrimeFact](https://algo-logic.info/prime-fact/) algo-logic.info さんいつもありがとう
+
+```cpp
+void solve() {
+    PrimeFact pf(10000000LL);
+    multicases([&](){
+        ll cin(n);
+        vll A(n);cin>>A;
+        vector<map<ll,ll>> factors(n);
+        rep(i,n)factors[i]=pf.get(A[i]);//全部素因数分解
+        map<ll,vll> exps;
+        rep(i,n)for(auto&[k,v]:factors[i])exps[k].push_back(v);//指数取り出し
+        for(auto&[_,V]:exps){
+            V.push_back(0);//(いちばんしたに指数0)
+            sort(rall(V));//指数ソート
+        }
+        mint prodall=1;
+        for(auto&[p,V]:exps)prodall*=pow_mod(p,V[0],998244353);
+        rep(i,n){
+            auto prod=prodall;
+            for(auto&[p,v]:factors[i]){//A_iの素因数を見て
+                if(exps[p][0]==v){//トップ指数なら
+                    //1位の指数で割って2位の指数で掛ける
+                    prod/=pow_mod(p,exps[p][0]-exps[p][1],998244353);
+                }
+            }
+            cout<<prod.val()<<sp;
+        }
+        cout<<el;
+    });
+}
+```

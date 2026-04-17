@@ -31,10 +31,26 @@ const contests = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
-    date: dateSchema,
+    contestDate: dateSchema,
+    publishAt: dateSchema,
+    updateAt: dateSchema.optional(),
     problems: z.array(reference("problems")),
     links: z.record(z.string(), z.string()).optional(),
   }),
 });
 
-export const collections = { problems, contests }
+const articles = defineCollection({
+  loader: glob({
+    base: "src/contents/articles",
+    pattern: "**/*.{md,mdx}",
+    generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
+  }),
+  schema: z.object({
+    title: z.string(),
+    publishAt: dateSchema,
+    updateAt: dateSchema.optional(),
+    links: z.record(z.string(), z.string()).optional(),
+  }),
+});
+
+export const collections = { problems, contests, articles }

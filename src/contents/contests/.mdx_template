@@ -1,9 +1,7 @@
 ---
 title: AtCoder Beginner Contest
 date: 2026-02-14
+publishAt: Ctrl+Shift+I
 problems: []
 links: {"問題": ""}
 ---
-import Animator from "../../components/Animator.astro";
-import Faint from "../../components/markup/Faint.astro";
-import Red from "../../components/markup/Red.astro";

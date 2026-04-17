@@ -2,25 +2,28 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from "astro:content";
 import Prose from "../../components/Prose.astro";
+import DateDiff from '../../components/DateDiff.astro';
 
 const posts = await getCollection("contests");
 posts.sort((a, b) => {
-  const dateA = a.data.date;
-  const dateB = b.data.date;
+  const dateA = a.data.contestDate;
+  const dateB = b.data.contestDate;
   return dateB.getTime() - dateA.getTime();
 });
 ---
 
 <Layout title="Contests">
   <Prose>
-    <h1 class="tw:text-lg">Contests - コンテスト</h1>
+    <h1 class="tw:text-lg">コンテスト一覧</h1>
     <ul>
       {posts.map(post => (
         <li>
-          <div class="tw:flex tw:flex-row tw:gap-3">
+          <div class="tw:flex tw:flex-row tw:gap-3 tw:items-end">
             <a href={`/contests/${post.id}`}>
               {post.data.title}
             </a>
+            <span class="tw:text-xs">投稿：<DateDiff date={post.data.publishAt}/></span>
+            {post.data.updateAt && <span class="tw:text-xs">更新：<DateDiff date={post.data.updateAt}/></span>}
           </div>
         </li>
       ))}

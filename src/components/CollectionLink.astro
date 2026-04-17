@@ -1,0 +1,16 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { CollectionKey } from 'astro:content';
+import { getEntry } from 'astro:content';
+
+interface Props<T extends CollectionKey> {
+  collection: T;
+  id: CollectionEntry<T>["id"];
+}
+
+const { collection, id } = Astro.props;
+const post = await getEntry(collection, id);
+console.log(post);
+---
+
+<a href={`/${collection}/${id}`}>{post.data.title}</a>

@@ -4,7 +4,7 @@ import { getCollection } from "astro:content";
 import Prose from "../../components/Prose.astro";
 import DateDiff from '../../components/DateDiff.astro';
 
-const posts = await getCollection("problems");
+const posts = await getCollection("articles");
 posts.sort((a, b) => {
   const dateA = a.data.publishAt;
   const dateB = b.data.publishAt;
@@ -12,14 +12,14 @@ posts.sort((a, b) => {
 });
 ---
 
-<Layout title="Problems">
+<Layout title="Articles">
   <Prose>
-    <h1 class="tw:text-lg">問題一覧</h1>
+    <h1 class="tw:text-lg">記事一覧</h1>
     <ul>
       {posts.map(post => (
         <li>
           <div class="tw:flex tw:flex-row tw:gap-3 tw:items-end">
-            <a href={`/problems/${post.id}`}>
+            <a href={`/articles/${post.id}`}>
               {post.data.title}
             </a>
             <span class="tw:text-xs">投稿：<DateDiff date={post.data.publishAt}/></span>

@@ -3,8 +3,9 @@ import { render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Prose from "../../components/Prose.astro";
 import { getCollection } from "astro:content";
-import DateYMD from "../../components/DateYMD.astro";
 import { getEntries } from "astro:content";
+import Links from "../../components/Links.astro";
+import { components } from "../../components/mdx_components.ts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("contests");
@@ -24,9 +25,6 @@ const problems = await getEntries(post.data.problems);
 	<Prose>
 		<a href="/contests">コンテスト一覧</a>
 		<h1>{post.data.title}</h1>
-		<div class="tw:-mt-6 tw:mb-6">
-			<DateYMD date={post.data.date}/>
-		</div>
 		<div class="tw:-mt-6 tw:mb-8">
 			<h2>問題</h2>
     	<ul>
@@ -41,14 +39,7 @@ const problems = await getEntries(post.data.problems);
     	  ))}
     	</ul>
 		</div>
-		<div class="tw:mx-2">
-			<span>リンク</span>
-			{post.data.links &&
-				Object.entries(post.data.links).map(([name, link]) => (
-					<a href={link} target="_blank">{name}</a>
-				))
-			}
-		</div>
-		<Content />
+		<Links links={post.data.links}/>
+		<Content components={components} />
 	</Prose>
 </Layout>

@@ -1,0 +1,82 @@
+---
+title: ABC445 F - Exactly K Steps 2
+publishAt: 2026-04-17 11:26:24
+links: {"問題": "https://atcoder.jp/contests/abc445/tasks/abc445_f"}
+---
+
+## 問い
+
+$N (\leq 100)$ 頂点の有向グラフがあり、\
+すべての頂点の組にコスト $C_{i,j}$ の辺が存在する（自己ループ含む）。\
+全ての頂点について、ちょうど $K (\leq 10^9)$ 回移動して自分自身に戻る経路のうち、\
+通った辺のコストの総和としてありうる最小値をそれぞれ求めよ。
+
+## 解く
+
+- ワーシャルフロイド？
+- ダブリング？
+- エッセンスとしてワーシャルフロイドっぽさは感じるが、\
+ただ全頂点対最短距離を求めても何ステップかの情報が抜け落ちてしまうから\
+Exactly ではなさそう
+- たとえば、頂点1←→2の移動に比較的大きめのコストがかかるが、\
+頂点2を含むコスト0のサイクルがあって周期がぴったり合う、とかなら\
+1→2→……→2→1 が最善になる可能性がある
+- 初手の移動は一番コストの低い辺一択か？
+  - No 移動先から生えている辺が全部ぼったくりコストかもしれない
+- ワーシャルフロイドの要領で隣接行列をK回更新する（with ダブリング）？
+- 普通にワーシャルフロイド+ダブリングでいいんですか？
+- `cost[k][i][j]`＝ $2^k$ ステップ移動したとき、$i$ から $j$ までの最小コスト
+
+## 書く
+
+### 方針
+
+- ダブリングは一回整備したライブラリに投げっぱなしなので変化球に弱い
+- まず`cost[0][i][j]`に入力（$C$）をそのままつっこむ
+- `cost[1][i][j]=cost[0][i][x]+cost[0][x][j]`かしら
+- 最終的な答え（$K$ステップ）はどう求める？
+- これもワーシャルフロイドの要領で求められそう
+  - たとえば7ステップなら、
+    1. `dist=cost[2]` (4ステップ分)
+    2. `dist2[i][j]=dist[i][x]+cost[1][x][j]` (+2ステップ)
+    2. `dist3[i][j]=dist2[i][x]+cost[0][x][j]` (+1ステップ)
+  - 足す順序関係ないよね？
+
+### 実装
+
+- 書いてみれば意外と簡単だった
+
+```cpp
+void solve() {
+    vll sq={1};//2の累乗
+    rep(i,40)sq.push_back(sq[i]*2);
+
+    ll cin(n,K);
+    vector<vvll> cost(41,vvll(n,vll(n,INFLL)));
+    rep(i,n)rep(j,n)cin>>cost[0][i][j];
+    rep(k,1,41){
+        rep(via,n)rep(i,n)rep(j,n){
+            chmin(cost[k][i][j],cost[k-1][i][via]+cost[k-1][via][j]);
+        }
+    }
+    vvll dist(n,vll(n,0));
+    bool uninit=true;
+    ll remain=K;
+    reprev(k,41){
+        if(remain<sq[k])continue;
+        remain-=sq[k];
+        if(uninit){
+            dist=cost[k];
+            uninit=false;
+        }
+        else{
+            vvll newdist(n,vll(n,INFLL));
+            rep(via,n)rep(i,n)rep(j,n){
+                chmin(newdist[i][j],dist[i][via]+cost[k][via][j]);
+            }
+            dist=newdist;
+        }
+    }
+    rep(i,n)cout<<dist[i][i]<<el;
+}
+```

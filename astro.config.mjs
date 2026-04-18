@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import remarkEmoji from 'remark-emoji';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
@@ -11,7 +12,7 @@ import mdx from '@astrojs/mdx';
 // https://astro.build/config
 export default defineConfig({
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkEmoji, remarkMath],
     rehypePlugins: [rehypeKatex],
     shikiConfig: {
       wrap: true,

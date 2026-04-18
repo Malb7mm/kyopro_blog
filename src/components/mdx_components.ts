@@ -3,8 +3,10 @@ import CollectionLink from "./CollectionLink.astro";
 
 import Faint from "./markup/Faint.astro";
 import Red from "./markup/Red.astro";
+import Color from "./markup/Color.astro";
+import Size from "./markup/Size.astro";
 import Block from "./markup/Block.astro";
 
 import { CldImage } from 'astro-cloudinary';
 
-export const components = { Animator, CollectionLink, Faint, Red, Block, CldImage };
+export const components = { Animator, CollectionLink, Faint, Red, Color, Size, Block, CldImage };

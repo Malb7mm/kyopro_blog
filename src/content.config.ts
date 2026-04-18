@@ -20,6 +20,7 @@ const problems = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
+    description: z.string().optional(),
     publishAt: dateSchema.default(new Date()),
     updateAt: dateSchema.optional(),
     links: z.record(z.string(), z.string()).optional(),
@@ -35,6 +36,7 @@ const contests = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
+    description: z.string().optional(),
     contestDate: dateSchema,
     publishAt: dateSchema.default(new Date()),
     updateAt: dateSchema.optional(),
@@ -52,6 +54,7 @@ const articles = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
+    description: z.string().optional(),
     publishAt: dateSchema.default(new Date()),
     updateAt: dateSchema.optional(),
     links: z.record(z.string(), z.string()).optional(),

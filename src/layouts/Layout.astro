@@ -4,11 +4,16 @@ import Desktop from "./Desktop.astro";
 import Mobile from "./Mobile.astro";
 import Header from "./Header.astro";
 
+const url = new URL(Astro.url.pathname, Astro.site);
+
 interface Props {
 	title?: string;
+	description?: string;
+	type?: string;
 }
 
-const { title = "" } = Astro.props;
+const DEFAULT_TITLE = "Malb7mm's kyopro_blog";
+const { title = DEFAULT_TITLE, description = "（◞‸◟）きょうぷろあー", type = "website" } = Astro.props;
 ---
 
 <!doctype html>
@@ -16,11 +21,17 @@ const { title = "" } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.45/dist/katex.min.css" integrity="sha384-UA8juhPf75SzzAMA/4fo3yOU7sBJ0om7SCD2GHq0fZqZco6tr1UCV7nUbk9J90JM" crossorigin="anonymous">
 		<meta name="generator" content={Astro.generator} />
-		<title>{title && `${title} | `} Malb7mm's kyopro_blog</title>
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content={type} />
+		<meta property="og:url" content={url} />
+		<meta property="og:image" content="https://res.cloudinary.com/malb7mm/image/upload/v1776523798/a043ce3f-e1aa-402f-9ba2-150d5ace9cab.png" />
+		<meta property="og:site_name" content="Malb7mm's kyopro_blog" />
+		<meta name="twitter:card" content="summary" />
+		<title>{title != DEFAULT_TITLE && `${title} | `} Malb7mm's kyopro_blog</title>
 	</head>
 	<body>
 		<div class="tw:hidden tw:md:block">

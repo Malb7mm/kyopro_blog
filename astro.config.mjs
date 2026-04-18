@@ -36,5 +36,5 @@ export default defineConfig({
   },
 
   integrations: [mdx()],
-  site: "https://malb7mm.github.io",
+  site: "https://cp.waniwala.com",
 });

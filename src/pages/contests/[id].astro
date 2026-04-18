@@ -21,7 +21,7 @@ const { Content } = await render(post);
 const problems = await getEntries(post.data.problems);
 ---
 
-<Layout title={post.data.title}>
+<Layout title={post.data.title} description={post.data.description} type="article">
 	<Prose>
 		<a href="/contests">コンテスト一覧</a>
 		<h1>{post.data.title}</h1>

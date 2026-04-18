@@ -24,7 +24,7 @@ const contest = contests.find(c =>
 );
 ---
 
-<Layout title={post.data.title}>
+<Layout title={post.data.title} description={post.data.description} type="article">
 	<Prose>
 		<div class="tw:flex tw:flex-row tw:gap-3">
 			<a href="/problems">問題一覧</a>

@@ -1,0 +1,40 @@
+---
+title: ABC451 E - Tree Distance
+links: { "問題": "https://atcoder.jp/contests/abc451/tasks/abc451_e" }
+wip: true
+---
+
+## 問い
+
+$N$ 頂点の重み付き無向木であって、\
+「任意の頂点対 $i,j \enspace (1 \leq i < j \leq N)$ について、距離が $A_{i,j}$」\
+を満たすものが存在するか判定せよ。
+
+## 解く
+
+- コンテスト終わった後に解法チラっと聞いた気がする
+  - 条件の木が存在するなら一意に定まるので、適当に構築してから判定する、みたいな
+  - 一意に定まる証明をちゃんとしたい
+  - 辺で直接つながっている頂点同士の距離は辺の重みに等しく、それ以外は\
+  実質他の辺同士の距離の和として導出される値である
+    - こういうことね
+    <CldImage src="34e2c8f7-05a7-46df-a1a5-692aec09a148" alt="グラフ" />
+  - 「変数の値を入れ替えたら等式が破綻する」ことを示せればよさそう
+  - 示せるんですか？（数弱）
+  <Block>
+    - 制約より、全ての辺の重みは正である
+    - ある重み付き木が存在して、
+    $\color{red} A_{1,3} \color{black} = \color{green} A_{1,2} \color{black} + \color{blue} A_{2,3} \footnotesize \enspace \color{black} \cdots (1)$ 
+    とする
+    - ここで、同時に 
+    $\color{green} A_{1,2} \color{black} = \color{red} A_{1,3} \color{black} + \color{blue} A_{2,3} \footnotesize \enspace \color{black} \cdots (2)$ 
+    が成り立つと仮定する
+    - $(2)$ に $(1)$ を代入すると
+    $$
+    \color{green} A_{1,2} \color{black} = (\color{green} A_{1,2} \color{black} + \color{blue} A_{2,3} \color{black} )+ \color{blue} A_{2,3}\\
+    \color{green} 0 \color{black} = \color{blue} 2A_{2,3}
+    $$
+    - 重みが正でない辺ができてしまったので、仮定は誤り
+  </Block>
+  - 示せたんですか？（数弱）
+  - Claude にダメと言われたため続行

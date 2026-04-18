@@ -1,0 +1,146 @@
+---
+title: GodIter
+publishAt: 2026-04-18T17:29:48+09:00
+links: {}
+---
+
+## 神イテレーター
+
+- 神←大げさ
+- `lower_bound`/`upper_bound`に書き味を近づけつつ、以上/以下の非対称性をなくした
+- C++20じゃないと多分動かない
+- テンプレートに突っ込むには文字数が多すぎる
+- ご自由にお使いください
+  - 期待通りに動作する保証はなし
+  - includeとかが欠けてるのはすみません！（`#include <bits/stdc++.h>`しているため）
+- 使用例：<CollectionLink collection="problems" id="abc385_d" />
+
+```cpp
+namespace GodIter {
+    template <typename C>
+    concept Erasable = requires(C container, std::ranges::iterator_t<C> iterator) {
+        { container.erase(iterator) } -> std::bidirectional_iterator;
+    };
+
+    template <typename C, typename V>
+    concept BoundMethod = requires(C container, V value) {
+        { container.lower_bound(value) } -> std::bidirectional_iterator;
+        { container.upper_bound(value) } -> std::bidirectional_iterator;
+    };
+
+    template <typename C, typename V>
+    concept BoundStd = requires(C container, V value) {
+        { std::lower_bound(std::ranges::begin(container), std::ranges::end(container), value) } -> std::bidirectional_iterator;
+        { std::upper_bound(std::ranges::begin(container), std::ranges::end(container), value) } -> std::bidirectional_iterator;
+    };
+
+    template <typename C>
+    concept GodIterTarget = std::ranges::bidirectional_range<C> && Erasable<C>;
+
+    template <typename C, typename V>
+    concept BoundAny = BoundMethod<C, V> || BoundStd<C, V>;
+
+    template<typename C, typename V>
+    auto lower_bound(C& container, const V& value) {
+        if constexpr (BoundMethod<C, V>) return container.lower_bound(value);
+        else return std::lower_bound(std::ranges::begin(container), std::ranges::end(container), value);
+    }
+
+    template<typename C, typename V>
+    auto upper_bound(C& container, const V& value) {
+        if constexpr (BoundMethod<C, V>) return container.upper_bound(value);
+        else return std::upper_bound(std::ranges::begin(container), std::ranges::end(container), value);
+    }
+
+    template <typename TContainer, typename TValue>
+    requires std::ranges::bidirectional_range<TContainer> && Erasable<TContainer>
+    class GodIter {
+        using Iterator = std::ranges::iterator_t<TContainer>;
+        static constexpr int INF = 1 << 30;
+        TContainer& container;
+        Iterator it;
+        bool reverse_direction;
+        int begin_index;
+        int end_index;
+        int current_index;
+        bool erase_flag;
+
+        void update_bounding() {
+            if (it == std::ranges::begin(container) && begin_index == -INF) {
+                begin_index = current_index;
+            }
+            if (it == std::ranges::end(container) && end_index == INF) {
+                end_index = current_index - 1;
+            }
+        }
+        void next() {
+            if (!(it == std::ranges::end(container))) {
+                if (erase_flag) it = container.erase(it);
+                else it++;
+            }
+            erase_flag = false;
+            current_index++;
+            update_bounding();
+        }
+        void prev() {
+            if (erase_flag && !(it == std::ranges::end(container))) {
+                it = container.erase(it);
+            }
+            if (!(it == std::ranges::begin(container))) {
+                it--;
+            }
+            erase_flag = false;
+            current_index--;
+            update_bounding();
+        }
+
+    public:
+        GodIter(TContainer& container, Iterator it, bool reverse_direction)
+          : container(container),
+            it(it),
+            reverse_direction(reverse_direction),
+            begin_index(-INF),
+            end_index(INF),
+            current_index(0),
+            erase_flag(false)
+        {
+            update_bounding();
+        }
+
+        operator TValue() const { return *it; }
+        TValue val() const { return *it; }
+        bool valid() { return begin_index <= current_index && current_index <= end_index; }
+        void erase() { if (valid()) erase_flag = true; }
+        void forward() { reverse_direction ? prev() : next(); }
+        void backward() { reverse_direction ? next() : prev(); }
+    };
+
+    template <typename C, typename V>
+    requires GodIterTarget<C> && BoundAny<C, V>
+    GodIter<C, V> gte(C& container, const V& value) {
+        return GodIter<C, V>(container, lower_bound(container, value), false);
+    }
+
+    template <typename C, typename V>
+    requires GodIterTarget<C> && BoundAny<C, V>
+    GodIter<C, V> gt(C& container, const V& value) {
+        return GodIter<C, V>(container, upper_bound(container, value), false);
+    }
+
+    template <typename C, typename V>
+    requires GodIterTarget<C> && BoundAny<C, V>
+    GodIter<C, V> lte(C& container, const V& value) {
+        GodIter<C, V> gi(container, upper_bound(container, value), true);
+        gi.forward();
+        return gi;
+    }
+
+    template <typename C, typename V>
+    requires GodIterTarget<C> && BoundAny<C, V>
+    GodIter<C, V> lt(C& container, const V& value) {
+        GodIter<C, V> gi(container, lower_bound(container, value), true);
+        gi.forward();
+        return gi;
+    }
+}
+```

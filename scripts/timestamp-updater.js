@@ -24,6 +24,9 @@ for (const file of files) {
   if (doc.has("noupdate") && doc.get("noupdate")) {
     doc.delete("noupdate");
   }
+  else if (doc.has("wip") && doc.get("wip")) {
+    // no update
+  }
   else {
     const findIndex = (target) => {
       return doc.contents.items.findIndex(({ key }) => isScalar(key) && key.value === target);

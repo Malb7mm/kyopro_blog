@@ -4,7 +4,7 @@ import { getCollection } from "astro:content";
 import Prose from "../../components/Prose.astro";
 import DateDiff from '../../components/DateDiff.astro';
 
-const posts = await getCollection("contests");
+const posts = (await getCollection("contests")).filter(e => !e.data.wip);
 posts.sort((a, b) => {
   const dateA = a.data.contestDate;
   const dateB = b.data.contestDate;

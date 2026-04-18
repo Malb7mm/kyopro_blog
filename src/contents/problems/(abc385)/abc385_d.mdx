@@ -1,0 +1,254 @@
+---
+title: ABC385 D - Santa Claus 2
+publishAt: 2026-04-18T17:29:48+09:00
+links: { "問題": "https://atcoder.jp/contests/abc385/tasks/abc385_d" }
+---
+
+## 問い
+
+2次元平面上に $N$ 個の家が建っている。\
+はじめ、サンタクロースが点 $(S_x,S_y)$ にいる。サンタクロースの移動が\
+向き $D$ と 移動量 $C$ の組 $(D_i,C_i)$ として $M$ 組与えられるので、\
+最終的なサンタクロースの座標と通った家の数を求めよ（重複は数えない）。
+
+## 解く
+
+- [あさかつ4/18](https://kenkoooo.com/atcoder/#/contest/show/51823584-38cf-4593-abc2-025f1c948a99?activeTab=Standings) で解いた
+- まあ、`map<set<ll,ll>>`ですよね
+  - あるX座標に立っている家のY座標の一覧、とその逆
+- これってイテレータ地獄じゃないですか？
+
+## 書く
+
+- メロスは激怒した　必ずかの邪知暴虐の重実装を除かなければならぬ
+
+```cpp
+void solve() {
+    ll cin(n,m,sx,sy);
+    unordered_map<ll,set<ll>> xy,yx;
+    rep(i,n){
+        ll cin(x,y);
+        xy[x].insert(y);
+        yx[y].insert(x);
+    }
+    debug(xy);
+    debug(yx);
+    ll x=sx,y=sy,anscnt=0;
+    rep(i,m){
+        char cin(d);
+        ll cin(c);
+        debugs(d,c);
+        if(d=='U'){
+            auto itr=xy[x].lower_bound(y);
+            while(true){
+                if(itr==xy[x].end())break;
+                if((*itr)>y+c)break;
+                yx[*itr].erase(yx[*itr].find(x));
+                itr=xy[x].erase(itr);
+                anscnt++;
+            }
+            y+=c;
+        }
+        if(d=='R'){
+            auto itr=yx[y].lower_bound(x);
+            while(true){
+                if(itr==yx[y].end())break;
+                if((*itr)>x+c)break;
+                xy[*itr].erase(xy[*itr].find(y));
+                itr=yx[y].erase(itr);
+                anscnt++;
+            }
+            x+=c;
+        }
+        if(d=='D'){
+            auto itr=xy[x].upper_bound(y);
+            if (!(itr==xy[x].begin())) {
+                itr--;
+                while(true){
+                    if(*itr<y-c)break;
+                    yx[*itr].erase(yx[*itr].find(x));
+                    itr=xy[x].erase(itr);
+                    anscnt++;
+                    if(itr==xy[x].begin())break;
+                    itr--;
+                }
+            }
+            y-=c;
+        }
+        if(d=='L'){
+            auto itr=yx[y].upper_bound(x);
+            if (!(itr==yx[y].begin())) {
+                itr--;
+                while(true){
+                    if(*itr<x-c)break;
+                    xy[*itr].erase(xy[*itr].find(y));
+                    itr=yx[y].erase(itr);
+                    anscnt++;
+                    if(itr==yx[y].begin())break;
+                    itr--;
+                }
+            }
+            x-=c;
+        }
+    }
+    cout<<x<<sp<<y<<sp<<anscnt<<el;
+}
+```
+
+## 書く2
+
+- <CollectionLink collection="articles" id="goditer_260418" /> を作った
+- あんまり記述量は減ってない
+- 以上と以下の非対称性はなくなった
+
+```cpp
+void solve() {
+    ll cin(n,m,sx,sy);
+    unordered_map<ll,set<ll>> xy,yx;
+    rep(i,n){
+        ll cin(x,y);
+        xy[x].insert(y);
+        yx[y].insert(x);
+    }
+    ll x=sx,y=sy,anscnt=0;
+    rep(i,m){
+        char cin(d);
+        ll cin(c);
+        if(d=='U'){
+            auto it=GodIter::gte(xy[x],y);
+            while(it.valid()){
+                if(it>y+c)break;
+                yx[it].erase(x);
+                it.erase();
+                it.forward();
+                anscnt++;
+            }
+            y+=c;
+        }
+        if(d=='R'){
+            auto it=GodIter::gte(yx[y],x);
+            while(it.valid()){
+                if(it>x+c)break;
+                xy[it].erase(y);
+                it.erase();
+                it.forward();
+                anscnt++;
+            }
+            x+=c;
+        }
+        if(d=='D'){
+            auto it=GodIter::lte(xy[x],y);
+            while(it.valid()){
+                if(it<y-c)break;
+                yx[it].erase(x);
+                it.erase();
+                it.forward();
+                anscnt++;
+            }
+            y-=c;
+        }
+        if(d=='L'){
+            auto it=GodIter::lte(yx[y],x);
+            while(it.valid()){
+                if(it<x-c)break;
+                xy[it].erase(y);
+                it.erase();
+                it.forward();
+                anscnt++;
+            }
+            x-=c;
+        }
+    }
+    cout<<x<<sp<<y<<sp<<anscnt<<el;
+}
+```
+
+## 書く3
+
+- 変数入れ替えで通っちゃった
+
+```cpp
+void solve() {
+    ll cin(n,m,sx,sy);
+    unordered_map<ll,set<ll>> xy,yx;
+    rep(i,n){
+        ll cin(x,y);
+        xy[x].insert(y);
+        yx[y].insert(x);
+    }
+    ll x=sx,y=sy,anscnt=0;
+    rep(i,m){
+        char cin(d);
+        ll cin(c);
+        if(d=='L'||d=='R'){
+            swap(x,y);
+            swap(xy,yx);
+        }
+        if(d=='U'||d=='R'){
+            auto it=GodIter::gte(xy[x],y);
+            while(it.valid()){
+                if(it>y+c)break;
+                yx[it].erase(x);
+                it.erase();
+                it.forward();
+                anscnt++;
+            }
+            y+=c;
+        }
+        if(d=='D'||d=='L'){
+            auto it=GodIter::lte(xy[x],y);
+            while(it.valid()){
+                if(it<y-c)break;
+                yx[it].erase(x);
+                it.erase();
+                it.forward();
+                anscnt++;
+            }
+            y-=c;
+        }
+        if(d=='L'||d=='R'){
+            swap(x,y);
+            swap(xy,yx);
+        }
+    }
+    cout<<x<<sp<<y<<sp<<anscnt<<el;
+}
+```
+
+## 書く4
+
+- さすがに短いだけな気がしてきたな
+- ここまでやると何やってるか分からないが、変数入れ替えはアリかも
+
+```cpp
+void solve() {
+    ll cin(n,m,sx,sy);
+    unordered_map<ll,set<ll>> xy,yx;
+    rep(i,n){
+        ll cin(x,y);
+        xy[x].insert(y);
+        yx[y].insert(x);
+    }
+    ll x=sx,y=sy,anscnt=0;
+    rep(i,m){
+        char cin(d);
+        ll cin(c);
+        if(d=='L'||d=='R'){swap(x,y);swap(xy,yx);}
+        ll gy;
+        if(d=='U'||d=='R')gy=y+c;
+        if(d=='D'||d=='L')gy=y-c;
+        y=min(y,gy);
+        auto it=GodIter::gte(xy[x],y);
+        while(it.valid()){
+            if(it>y+c)break;
+            yx[it].erase(x);
+            it.erase();
+            it.forward();
+            anscnt++;
+        }
+        y=gy;
+        if(d=='L'||d=='R'){swap(x,y);swap(xy,yx);}
+    }
+    cout<<x<<sp<<y<<sp<<anscnt<<el;
+}
+```

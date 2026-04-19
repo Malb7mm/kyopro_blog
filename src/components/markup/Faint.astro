@@ -1,1 +1,8 @@
-<span style="opacity:0.55"><slot /></span>
+---
+interface Props {
+  o?: number;
+}
+const { o = "55%" } = Astro.props;
+---
+
+<span style=`color:color-mix(in srgb,currentColor ${o},transparent)`><slot /></span>

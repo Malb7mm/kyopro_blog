@@ -1,0 +1,179 @@
+---
+title: ABC454 E - LRUD Moving
+publishAt: 2026-04-19T16:01:43+09:00
+links: { "問題": "https://atcoder.jp/contests/abc454/tasks/abc454_e" }
+---
+
+## 問い
+
+$N \times N$ のグリッドがある。\
+左上のマスから始め、上下左右のマスへの移動を繰り返し、\
+同じマスを2度通らずに右下のマスへたどり着く経路であって、\
+マス $(A,B)$ のみを通らない経路があるか判定・構築せよ。\
+<Border><Size s="13">*（マルチテストケース）* $N \leq 10^3, \enspace (A,B) \neq (1,1), (N,N)$</Size></Border>
+
+## 解く
+
+### 市松パリティで考える
+- ゴールにたどり着くには\
+「白→黒→白→黒→……→白」の順で移動する必要がある
+  - つまり白マスが黒マスより一つ多い必要がある
+<Border>
+  <svg width="79" height="79" viewBox="0 0 79 79">
+    { [0,1,2,3].map(x=>[0,1,2,3].map(y=>(
+      <rect x={x*20} y={y*20} width="19" height="19" fill={(x+y)%2==0?"#ccc":"#888"} />
+    ))) }
+    <rect x={40} y={20} width="19" height="19" fill="#c68" />
+    <Arrow points={[10,10,10,70, 30,70,30,10, 70,10,70,50, 50,50,50,70,70,70]} color="#127" />
+  </svg>
+</Border>
+- グリッドが奇数×奇数の場合、元から白マスが黒マスより一つ多いので、
+問題の条件通り一マス取り除くとそれが白でも黒でも完走できなくなる
+<Border>
+  <svg width="99" height="99" viewBox="0 0 99 99">
+    { [0,1,2,3,4].map(x=>[0,1,2,3,4].map(y=>(
+      <rect x={x*20} y={y*20} width="19" height="19" fill={(x+y)%2==0?"#ccc":"#888"} />
+    ))) }
+    <g class="tw:[text-anchor:middle] tw:[dominant-baseline:central]">
+      <text X={10} y={10} >1</text>
+      <text X={30} y={30} >2</text>
+      <text X={50} y={10} >3</text>
+      <text X={70} y={30} >4</text>
+      <text X={90} y={10} >5</text>
+      <text X={10} y={50} >6</text>
+      <text X={30} y={70} >7</text>
+      <text X={50} y={50} >8</text>
+      <text X={70} y={70} >9</text>
+      <text X={90} y={50} >10</text>
+      <text X={10} y={90} >11</text>
+      <text X={50} y={90} >12</text>
+      <text X={90} y={90} >13</text>
+      <g fill="white">
+        <text X={10} y={30} >1</text>
+        <text X={30} y={10} >2</text>
+        <text X={50} y={30} >3</text>
+        <text X={70} y={10} >4</text>
+        <text X={90} y={30} >5</text>
+        <text X={10} y={70} >6</text>
+        <text X={30} y={50} >7</text>
+        <text X={50} y={70} >8</text>
+        <text X={70} y={50} >9</text>
+        <text X={90} y={70} >10</text>
+        <text X={30} y={90} >11</text>
+        <text X={70} y={90} >12</text>
+      </g>
+    </g>
+  </svg>
+</Border>
+- グリッドが偶数×偶数の場合は白マスと黒マスの数が同じ
+  - よって、黒マスを1つ取り除くと白黒交互の条件は満たせる
+- とりあえず`Yes`であるための必要条件がふたつ分かった
+  - $N$ が偶数
+  - $(A,B)$ が黒マス（$(A+B)$ が奇数）
+### 具体的な経路の構築
+- 縦二列ずつで割って、$B$ 列目の相方になる列を $C$ とする（赤枠）
+<Border>
+  <svg width="119" height="159" viewBox="0 -10 119 139">
+    { [0,1,2,3,4,5].map(x=>[0,1,2,3,4,5].map(y=>(
+      <rect x={x*20} y={y*20} width="19" height="19" fill={
+        (x==2||x==3)
+        ?((x+y)%2==0?"#eca":"#a86")
+        :((x+y)%2==0?"#ccc":"#888")
+      } />
+    ))) }
+    <rect x={60} y={40} width="19" height="19" fill="#c68" />
+    <rect x={35} y={-10} width="29" height="139" fill="none" stroke="#c03" />
+  </svg>
+</Border>
+- $B$ 列目を無視して考えると、蛇行するだけでゴールにたどり着ける
+  - $B$ 列目に入るときは必ず白マスなので、\
+  必ず $(A,B)$ を回避して下のような蛇行ができる
+<Border>
+  <svg width="119" height="119" viewBox="0 0 119 119">
+    { [0,1,2,3,4,5].map(x=>[0,1,2,3,4,5].map(y=>(
+      <rect x={x*20} y={y*20} width="19" height="19" fill={(x+y)%2==0?"#ccc":"#888"} />
+    ))) }
+    <rect x={60} y={40} width="19" height="19" fill="#c68" />
+    <Arrow points={[10,10,10,110, 30,110,30,10, 50,10,50,110, 90,110,90,10, 110,10,110,110]} color="#127" />
+  </svg>
+</Border>
+- $C$ 列目を進むとき、ついでに縦に蛇行して $B$ 列目のマスも踏む
+  - $C$ 列目を進む向きは必ず下方向
+  - $C$ が奇数列目か、偶数列目かで場合分けすると書きやすい
+    - 奇数列目の場合は、$(1,C)$ から右→下→左→下→……の繰り返し
+    - 偶数列目の場合は、$(1,C)$ から下→左→下→右→……の繰り返し
+    - $A$ 行目だけ横移動をスキップ
+<Border>
+  <svg width="119" height="119" viewBox="0 0 119 119">
+    { [0,1,2,3,4,5].map(x=>[0,1,2,3,4,5].map(y=>(
+      <rect x={x*20} y={y*20} width="19" height="19" fill={(x+y)%2==0?"#ccc":"#888"} />
+    ))) }
+    <rect x={60} y={40} width="19" height="19" fill="#c68" />
+    <Arrow points={[10,10,10,110, 30,110,30,10, 70,10,70,30, 50,30,50,70, 70,70,70,90, 50,90,50,110, 90,110,90,10, 110,10,110,110]} color="#127" />
+    <Arrow points={[50,10, 70,10,70,30, 50,30,50,70, 70,70,70,90, 50,90,50,110]} color="#f62" strokeWidth={3} head={false}/>
+  </svg>
+</Border>
+<Border>
+  <svg width="119" height="119" viewBox="0 0 119 119">
+    { [0,1,2,3,4,5].map(x=>[0,1,2,3,4,5].map(y=>(
+      <rect x={x*20} y={y*20} width="19" height="19" fill={(x+y)%2==0?"#ccc":"#888"} />
+    ))) }
+    <rect x={40} y={100} width="19" height="19" fill="#c68" />
+    <Arrow points={[10,10,10,110, 30,110,30,10, 70,10,70,30, 50,30,50,50, 70,50,70,70, 50,70,50,90, 70,90,70,110, 90,110,90,10, 110,10,110,110]} color="#127" />
+    <Arrow points={[70,10,70,30, 50,30,50,50, 70,50,70,70, 50,70,50,90, 70,90,70,110]} color="#f62" strokeWidth={3} head={false} />
+  </svg>
+</Border>
+- この手順で考えてみると、$(A,B)$ がどこの黒マスに置いてあっても\
+一筆書きが可能っぽいことがわかる（適当！）
+
+## 書く
+
+- [提出](https://atcoder.jp/contests/abc454/submissions/75105213)
+
+```cpp
+void solve() {
+    multicases([&](){
+        ll cin(n,a,b);
+        if(n%2==1){cout<<"No"<<el;return;}
+        if((a+b)%2==0){cout<<"No"<<el;return;}
+
+        ostringstream oss;
+        ll c=(b%2==0)?b-1:b+1;
+        string v="D";
+
+        rep(i,1,n+1){
+            if(i==b){
+                oss<<"R";
+            }
+            else if(i==c){
+                if(c%2==1){
+                    string h="R";
+                    // 1スタート（jは横移動時の縦座標に合わせる）
+                    rep(j,1,n){
+                        if(j!=a)oss<<h,h=h=="R"?"L":"R";
+                        oss<<"D";
+                    }
+                }
+                if(c%2==0){
+                    string h="L";
+                    // 2スタート（jは横移動時の縦座標に合わせる）
+                    rep(j,2,n+1){
+                        oss<<"D";
+                        if(j!=a)oss<<h,h=h=="R"?"L":"R";
+                    }
+                }
+                oss<<"R";
+                v=v=="D"?"U":"D";
+            }
+            else{
+                rep(j,n-1)oss<<v;
+                oss<<"R";
+                v=v=="D"?"U":"D";
+            }
+        }
+        auto ans=oss.str();
+        ans.pop_back();//最後にRが入るので取り除く
+        cout<<"Yes"<<el<<ans<<el;
+    });
+}
+```

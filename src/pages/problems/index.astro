@@ -27,6 +27,7 @@ posts.sort((a, b) => {
             </a>
             <span class="tw:text-xs">投稿：<DateDiff date={post.data.publishAt}/></span>
             {post.data.updateAt && <span class="tw:text-xs">更新：<DateDiff date={post.data.updateAt}/></span>}
+            {post.data.wip && <span class="tw:text-xs tw:opacity-40">WIP</span>}
           </div>
         </li>
       ))}

@@ -9,15 +9,13 @@ import { tailwindColors } from './scripts/palette-generator/vite-plugin-tw-color
 
 import mdx from '@astrojs/mdx';
 
+import expressiveCode from 'astro-expressive-code';
+
 // https://astro.build/config
 export default defineConfig({
   markdown: {
     remarkPlugins: [remarkEmoji, remarkMath],
     rehypePlugins: [rehypeKatex],
-    shikiConfig: {
-      wrap: true,
-      theme: 'github-light',
-    },
   },
 
   vite: {
@@ -35,6 +33,21 @@ export default defineConfig({
     }), tailwindcss()],
   },
 
-  integrations: [mdx()],
+  integrations: [expressiveCode({
+    themes: ["github-light"],
+    styleOverrides: {
+      borderRadius: "0",
+      codeBackground: "var(--tw-color-p-50)",
+      codeFontSize: "0.85rem",
+      codeLineHeight: "1.1rem",
+      frames: {
+        tooltipSuccessBackground: "var(--tw-color-p-150)",
+        tooltipSuccessForeground: "black",
+      }
+    },
+    defaultProps: {
+      showLineNumbers: true,
+    },
+  }), mdx()],
   site: "https://cp.waniwala.com",
 });

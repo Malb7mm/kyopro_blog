@@ -1,0 +1,9 @@
+---
+interface Props {
+  c?: string;
+  o?: number;
+}
+const { c = "#903", o = "10%" } = Astro.props;
+---
+
+<span style={`background-color:color-mix(in srgb,${c} ${o},transparent)`}><slot /></span>

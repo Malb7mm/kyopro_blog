@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import remarkEmoji from 'remark-emoji';
+import remarkGemoji from 'remark-gemoji';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
@@ -14,7 +14,7 @@ import expressiveCode from 'astro-expressive-code';
 // https://astro.build/config
 export default defineConfig({
   markdown: {
-    remarkPlugins: [remarkEmoji, remarkMath],
+    remarkPlugins: [remarkGemoji, remarkMath],
     rehypePlugins: [rehypeKatex],
   },
 

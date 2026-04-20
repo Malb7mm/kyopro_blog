@@ -7,6 +7,7 @@ import Color from "./markup/Color.astro";
 import Size from "./markup/Size.astro";
 import Mark from "./markup/Mark.astro";
 import Block from "./markup/Block.astro";
+import Fold from "./markup/Fold.astro";
 import Border from "./markup/Border.astro";
 import Arrow from "./svg/Arrow.astro";
 
@@ -21,6 +22,7 @@ export const components = {
   Size,
   Mark,
   Block,
+  Fold,
   Border,
   CldImage,
   Arrow,

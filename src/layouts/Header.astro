@@ -1,5 +1,7 @@
 ---
 import Prose from "../components/Prose.astro"
+
+const githubBadgeUrl = `https://img.shields.io/github/actions/workflow/status/Malb7mm/kyopro_blog/deploy.yml`;
 ---
 
 <div>
@@ -11,7 +13,10 @@ import Prose from "../components/Prose.astro"
       <a href="/articles">記事一覧</a>
       <hr>
       <a href="https://atcoder.jp/users/Malb7mm" target="_blank">atcoder.jp/users/Malb7mm</a>
-      <a href="https://github.com/malb7mm/kyopro_blog" target="_blank">GitHub</a>
+      <p class="tw:m-0!">
+        <a href="https://github.com/malb7mm/kyopro_blog" target="_blank">GitHub</a>
+        <img class="tw:inline tw:m-0! tw:-ml-3! tw:scale-75" src={githubBadgeUrl} alt="Deploy Status Badge" />
+      </p>
     </nav>
   </Prose>
 </div>

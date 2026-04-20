@@ -1,0 +1,17 @@
+---
+import Faint from "./Faint.astro";
+import Block from "./Block.astro";
+
+interface Props {
+  label?: string;
+}
+
+const { label = "開く" } = Astro.props;
+---
+
+<details class="tw:my-6">
+  <summary>{Astro.slots.has("label") ? <slot name="label"/> : label}</summary>
+  <Block>
+    <slot />
+  </Block>
+</details>

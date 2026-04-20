@@ -1,0 +1,97 @@
+---
+title: ABC454 D - (xx)
+publishAt: 2026-04-20T14:30:15+09:00
+links: { "問題": "https://atcoder.jp/contests/abc454/tasks/abc454_d" }
+---
+
+## 問題
+
+`(`,`x`,`)` からなる文字列 $A,B$ が与えられる。\
+$A$ へ下の操作を自由に行えるとき、$B$ に一致させることが可能か判定せよ。
+
+- 部分文字列 `(xx)` を `xx` に置き換える
+- 部分文字列 `xx` を `(xx)` に置き換える
+
+<Border><Size s="13">*（マルチテストケース）* $\sum_{\mathtt{Testcases}} |A|+|B| \leq 2 \times 10^6$</Size></Border>
+
+<Fold>
+  <Faint slot="label">チラシの裏</Faint>
+  - [解説](https://atcoder.jp/contests/abc454/editorial/19118)「明らかに`(xx)`同士は disjoint です。」
+    - ↑本番の考察中これに納得するまでに1分くらいかかった
+  - まあ「両方から括弧を消せるだけ消せばよさそう」まではたどり着いた
+  - そしてこれを提出したところWA
+  - 普通に`conv`の実装が大嘘だったっぽい
+
+  ```cpp
+  void solve() {
+    multicases([&](){
+        string cin(a,b);
+        auto conv=[&](string s){
+            unordered_set<ll> rem;
+            vll st;
+            ll offset=0;
+            rep(i,s.length()){
+                if(s[i]=='(')st.push_back(i);
+                else if(s[i]==')'){
+                    if(st.size()>0&&st.back()==i-3-offset){
+                        rem.insert(st.back());
+                        rem.insert(i);
+                        st.pop_back();
+                        offset+=2;
+                    }
+                    else{
+                        offset=0;
+                        st.clear();
+                    }
+                }
+            }
+            ostringstream oss;
+            rep(i,s.length()){
+                if(!rem.contains(i))oss<<s[i];
+            }
+            return oss.str();
+        };
+        auto a2=conv(a);
+        auto b2=conv(b);
+        debugs(a2,b2);
+        ansYn(a2==b2);
+    });
+  }
+  ```
+</Fold>
+
+## 解法
+
+- エスパーすると、$A, B$ にそれぞれ`(xx)`→`xx`の置換をできるだけ適用して\
+同じ文字列になるか判定すればいいことが分かります
+- 後でここ書き直すので許してください
+
+## 実装
+
+```cpp
+void solve() {
+    multicases([&](){
+        string cin(a,b);
+
+        // sから括弧をすべて取り除く変換を行う
+        auto conv=[&](string s){
+
+            // 空文字列tを用意し、
+            // sから一つずつ文字を取り出してsを再構築する
+            string t="";
+            for(auto&c:s){
+                t+=c;
+
+                // 再構築中、tのsuffixが(xx)ならばxxに変換する
+                if(t.length()>=4&&t.substr(t.length()-4,4)=="(xx)"){
+                    rep(i,4)t.pop_back();
+                    t+="xx";
+                }
+            }
+            return t;
+        };
+        
+        ansYn(conv(a)==conv(b));
+    });
+}
+```

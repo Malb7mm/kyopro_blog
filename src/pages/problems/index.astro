@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from "astro:content";
 import Prose from "../../components/Prose.astro";
-import DateDiff from '../../components/DateDiff.astro';
+import DateDiff from '../../components/DateDiff.svelte';
 
 let posts = await getCollection("problems");
 if (import.meta.env.PROD) {
@@ -33,8 +33,8 @@ posts.sort((a, b) => {
             <a href={`/problems/${post.id}`}>
               {post.data.title}
             </a>
-            <span class="tw:text-xs">投稿：<DateDiff date={post.data.publishAt}/></span>
-            {post.data.updateAt && <span class="tw:text-xs">更新：<DateDiff date={post.data.updateAt}/></span>}
+            <span class="tw:text-xs">投稿：<DateDiff date={post.data.publishAt} client:load /></span>
+            {post.data.updateAt && <span class="tw:text-xs">更新：<DateDiff date={post.data.updateAt} client:load /></span>}
             {post.data.wip && <span class="tw:text-xs tw:opacity-40">WIP</span>}
           </div>
         </li>

@@ -11,6 +11,8 @@ import mdx from '@astrojs/mdx';
 
 import expressiveCode from 'astro-expressive-code';
 
+import svelte from "@astrojs/svelte";
+
 // https://astro.build/config
 export default defineConfig({
   markdown: {
@@ -48,6 +50,6 @@ export default defineConfig({
     defaultProps: {
       showLineNumbers: true,
     },
-  }), mdx()],
+  }), mdx(), svelte()],
   site: "https://cp.waniwala.com",
 });
